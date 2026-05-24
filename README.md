@@ -9,7 +9,7 @@
 
 ## ⚡ LIVE DEMO DEPLOYMENT
 
-### **[PORTAL OPEN: ACCESS HERE](https://portfolio-six-drab-65.vercel.app/)**
+### **[PORTAL OPEN: ACCESS HERE](https://portfolio-delta-gray-29.vercel.app/)**
 *Hosted on Vercel with automatic continuous deployments.*
 
 ---
