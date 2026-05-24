@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Prince Badsiwal - Personal File</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='5,5 95,15 85,95 15,85' fill='%23e60012'/><text x='50' y='75' font-family='sans-serif' font-size='70' font-style='italic' font-weight='900' fill='%23ffffff' text-anchor='middle'>P</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:ital,wght@0,400;0,700;1,400;1,900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --p5-red: #e60012;
+            --p5-black: #111111;
+            --p5-white: #f8f8f8;
+            --p5-cyan: #00e5ff;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--p5-black);
+            color: var(--p5-white);
+            overflow: hidden; 
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .font-p5-header {
+            font-family: 'Bebas Neue', cursive;
+            letter-spacing: 2px;
+        }
+
+        /* --- Utility Shapes & Effects --- */
+        .jagged-box {
+            clip-path: polygon(2% 0, 100% 2%, 98% 100%, 0 98%);
+        }
+        
+        .jagged-box-alt {
+            clip-path: polygon(0 5%, 95% 0, 100% 95%, 5% 100%);
+        }
+
+        .slanted-text {
+            transform: skewX(-10deg) rotate(-2deg);
+        }
+
+        .text-stroke-black {
+            -webkit-text-stroke: 2px var(--p5-black);
+            text-shadow: 3px 3px 0px var(--p5-black);
+        }
+
+        .text-stroke-white {
+            -webkit-text-stroke: 1px var(--p5-white);
+            text-shadow: 2px 2px 0px var(--p5-white);
+        }
+
+        /* --- Background Patterns --- */
+        .bg-subway {
+            background-color: #222;
+            background-image: 
+                linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a), 
+                linear-gradient(45deg, #1a1a1a 25%, transparent 25%, transparent 75%, #1a1a1a 75%, #1a1a1a);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            position: absolute;
+            inset: 0;
+            z-index: -2;
+        }
+
+        .bg-stripes {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 15vh;
+            background: repeating-linear-gradient(
+                -45deg,
+                var(--p5-black),
+                var(--p5-black) 20px,
+                #333 20px,
+                #333 40px
+            );
+            transform: translateY(-50%) skewY(-5deg);
+            z-index: -1;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .bg-character {
+            position: absolute;
+            background-color: var(--p5-red);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            opacity: 0.8;
+            z-index: -1;
+            animation: float 6s infinite ease-in-out alternate;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        
+        @keyframes slideInLeft {
+            from { transform: translateX(-150%) skewX(20deg); opacity: 0; }
+            to { transform: translateX(0) skewX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(150%) skewX(-20deg); opacity: 0; }
+            to { transform: translateX(0) skewX(0); opacity: 1; }
+        }
+
+        @keyframes slideInBottom {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulseScale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes shatterIn {
+            0% { clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%); opacity: 0; transform: scale(0.5) rotate(-10deg); }
+            100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; transform: scale(1) rotate(0); }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.3s forwards; }
+        .animate-slide-left { animation: slideInLeft 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-slide-right { animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-slide-bottom { animation: slideInBottom 0.4s ease-out forwards; }
+        .animate-shatter { animation: shatterIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+
+        /* --- UI Components --- */
+        .screen {
+            display: none;
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        .p5-menu-btn {
+            position: relative;
+            background: var(--p5-white);
+            color: var(--p5-black);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.75rem;
+            padding: 0.35rem 1.5rem;
+            margin: 0.35rem 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        @media (min-width: 768px) {
+            .p5-menu-btn {
+                font-size: 2.5rem;
+                padding: 0.5rem 2rem;
+                margin: 0.5rem 0;
+                clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            }
+        }
+
+        .p5-menu-btn:hover, .p5-menu-btn:active {
+            background: var(--p5-red);
+            color: var(--p5-white);
+            transform: scale(1.1) translateX(20px) skewX(-10deg);
+            z-index: 10;
+        }
+
+        .p5-menu-btn::before {
+            content: '';
+            position: absolute;
+            top: 2px; left: 2px; right: 2px; bottom: 2px;
+            border: 2px solid transparent;
+            pointer-events: none;
+        }
+        .p5-menu-btn:hover::before {
+            border-color: var(--p5-black);
+            clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+
+        /* Dialog Box */
+        .dialog-container {
+            position: absolute;
+            bottom: 5%;
+            left: 5%;
+            width: 90%;
+            max-width: 600px;
+        }
+        
+        .dialog-name {
+            background: var(--p5-black);
+            color: var(--p5-white);
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            font-weight: bold;
+            clip-path: polygon(0 0, 90% 0, 100% 100%, 10% 100%);
+            margin-bottom: -10px;
+            position: relative;
+            z-index: 2;
+            border: 2px solid var(--p5-white);
+            transform: rotate(-2deg);
+        }
+
+        .dialog-box {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--p5-black);
+            padding: 1.5rem;
+            border: 4px solid var(--p5-black);
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 8px 8px 0px var(--p5-black);
+            position: relative;
+        }
+
+        .dialog-box::after {
+            content: '▼';
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            color: var(--p5-red);
+            animation: pulseScale 1s infinite;
+        }
+
+        /* Command Menu Style */
+        .command-bg {
+            background-color: var(--p5-red);
+            clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 85%);
+        }
+
+        .command-item {
+            background: var(--p5-black);
+            color: var(--p5-white);
+            padding: 0.35rem 1.25rem;
+            margin: 0.35rem 0;
+            font-family: 'Bebas Neue';
+            font-size: 1.5rem;
+            clip-path: polygon(0 0, 95% 0, 100% 100%, 5% 100%);
+            transform: skewX(-15deg);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        @media (min-width: 768px) {
+            .command-item {
+                padding: 0.5rem 1.5rem;
+                margin: 0.5rem 0;
+                font-size: 2rem;
+            }
+        }
+        
+        .command-item:hover {
+            background: var(--p5-white);
+            color: var(--p5-black);
+            border-color: var(--p5-black);
+            transform: skewX(-15deg) scale(1.05) translateX(10px);
+        }
+
+        /* Save Menu Style (Lists) */
+        .save-slot {
+            background: var(--p5-white);
+            color: var(--p5-black);
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            position: relative;
+            border: 3px solid var(--p5-black);
+            transform: rotate(-1deg);
+            transition: transform 0.2s;
+            box-shadow: 5px 5px 0 var(--p5-black);
+        }
+        .save-slot:hover {
+            transform: rotate(0deg) scale(1.02);
+            background: #fff0f0;
+        }
+        .save-slot-header {
+            background: var(--p5-red);
+            color: white;
+            display: inline-block;
+            padding: 0.2rem 1.5rem;
+            font-family: 'Bebas Neue';
+            font-size: 1.8rem;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+            box-shadow: 2px 2px 0 var(--p5-black);
+        }
+
+        /* Abstract Portrait */
+        .portrait-container {
+            position: absolute;
+            bottom: 0;
+            right: -5%;
+            width: 45%;
+            height: 50%;
+            pointer-events: none;
+            z-index: 5;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            opacity: 0.4;
+        }
+        @media (min-width: 768px) {
+            .portrait-container {
+                width: 60%;
+                height: 80%;
+                opacity: 1;
+            }
+        }
+        .abstract-portrait {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            filter: drop-shadow(-10px 10px 0px rgba(0,0,0,0.5));
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--p5-black);
+            color: var(--p5-white);
+            font-family: 'Bebas Neue';
+            padding: 0.25rem 1rem;
+            font-size: 1.25rem;
+            cursor: pointer;
+            z-index: 50;
+            clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+            border: 2px solid var(--p5-white);
+            transition: all 0.2s;
+        }
+        @media (min-width: 768px) {
+            .back-btn {
+                top: 20px;
+                right: 20px;
+                padding: 0.5rem 1.5rem;
+                font-size: 1.5rem;
+                clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+            }
+        }
+        .back-btn:hover {
+            background: var(--p5-red);
+            transform: scale(1.1);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--p5-black); }
+        ::-webkit-scrollbar-thumb { background: var(--p5-red); }
+
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN 0: INTRO -->
+    <div id="screen-intro" class="screen active" style="background-color: var(--p5-red);" onclick="navTo('screen-main')">
+        <div class="absolute inset-0 flex items-center justify-center overflow-hidden">
+            <img src="./intro_bg.jpg" onerror="this.style.display='none'" class="absolute inset-0 w-full h-full object-cover opacity-45 grayscale contrast-125 mix-blend-multiply" alt="Intro Background">
+            <div class="absolute w-[150vw] h-[50vh] bg-black opacity-20 transform -rotate-12"></div>
+        </div>
+        
+        <div class="dialog-container animate-slide-bottom">
+            <div class="dialog-name">Prince</div>
+            <div class="dialog-box">
+                System initialized. Junior Software Developer profile loaded.<br>
+                <span class="text-gray-500 text-sm italic mt-2 block">(Tap anywhere to start)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 1: MAIN MENU -->
+    <div id="screen-main" class="screen">
+        <div class="bg-subway"></div>
+        <div class="bg-stripes"></div>
+        
+        <div class="bg-character w-24 h-24 top-20 left-10"></div>
+        <div class="bg-character w-16 h-16 bottom-40 right-20" style="animation-delay: 1s;"></div>
+        <div class="bg-character w-32 h-32 top-1/2 right-1/4 opacity-50" style="animation-delay: 2s; animation-duration: 8s;"></div>
+
+        <div class="absolute top-10 left-5 md:left-20 z-10 animate-slide-left">
+            <h1 class="font-p5-header text-5xl md:text-8xl text-white text-stroke-black slanted-text mb-8 tracking-wider">
+                <span class="block transform -rotate-6 text-[1.2em]">RE</span>
+                <span class="block transform -translate-y-4 ml-8">SUME</span>
+            </h1>
+
+            <div class="flex flex-col items-start gap-2">
+                <div class="p5-menu-btn" onclick="navTo('screen-resume-submenu')">Personal info</div>
+                <div class="p5-menu-btn" onclick="navTo('screen-certs', 'bg-red')">Certifications</div>
+                <div class="p5-menu-btn" onclick="navTo('screen-socials', 'bg-cyan')">Network Links</div>
+            </div>
+        </div>
+
+        <div class="portrait-container animate-slide-right flex items-end justify-end">
+            <!-- Slanted Frame for Anime Image -->
+            <div class="relative w-full max-w-[280px] md:max-w-[360px] h-[70%] md:h-[75%] jagged-box border-4 border-white bg-black shadow-[10px_10px_0px_var(--p5-red)] md:shadow-[15px_15px_0px_var(--p5-red)] rotate-2 overflow-hidden mr-4 z-10">
+                <img src="./profile_avatar.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover contrast-110 hover:scale-105 transition-transform duration-500" alt="Menu Anime">
+                <div class="absolute inset-0 bg-[var(--p5-red)] mix-blend-color opacity-20 pointer-events-none"></div>
+            </div>
+            
+            <!-- SVG Mask overlapping the edge slightly for dynamic layer depth -->
+            <div class="w-28 md:w-40 h-auto transform -rotate-6 -translate-x-12 translate-y-4 filter drop-shadow-[5px_5px_0px_#000] flex-shrink-0 z-20">
+                <svg class="w-full h-auto" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 20 L150 80 L180 150 L160 300 L40 300 L20 150 L50 80 Z" fill="#000" />
+                    <path d="M100 30 L140 85 L160 140 L120 280 L60 280 L40 140 L60 85 Z" fill="#fff" />
+                    <path d="M100 40 L130 90 L140 130 L100 250 L80 130 L70 90 Z" fill="#e60012" />
+                    <circle cx="100" cy="100" r="15" fill="#000"/>
+                    <path d="M70 90 Q 85 80 100 90 Q 115 80 130 90" stroke="#000" stroke-width="4" fill="none"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: RESUME SUBMENU (Command Style) -->
+    <div id="screen-resume-submenu" class="screen bg-black">
+        <button class="back-btn" onclick="navTo('screen-main')">BACK</button>
+        
+        <div class="absolute inset-0 z-[-1] overflow-hidden">
+            <img src="./submenu_bg.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover opacity-20 contrast-125 mix-blend-luminosity" alt="Command Background">
+        </div>
+        
+        <div class="absolute inset-0 command-bg z-0 transform -skew-y-6 scale-110 opacity-90 animate-shatter"></div>
+
+        <div class="absolute inset-0 flex flex-col items-center justify-start md:justify-center z-10 overflow-y-auto p-4 py-16">
+            <div class="flex flex-col items-center my-auto">
+                <div class="font-p5-header text-8xl md:text-9xl text-black opacity-20 absolute top-10 left-0 transform -rotate-90 origin-top-left pointer-events-none">COMMAND</div>
+                
+                <div class="flex flex-col items-end gap-4 animate-slide-right">
+                    <div class="command-item" onclick="navTo('screen-about')">About me & Edu</div>
+                    <div class="command-item" onclick="navTo('screen-skills')">Skills & Awards</div>
+                    <div class="command-item" onclick="navTo('screen-projects')">Missions / Projects</div>
+                </div>
+            </div>
+        </div>
+        
+         <div class="portrait-container animate-slide-left" style="left: -10%; right: auto; transform: scaleX(-1);">
+            <svg class="abstract-portrait" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(10px 10px 0px rgba(0,0,0,0.5));">
+                <path d="M50 50 L150 20 L180 100 L120 300 L20 300 L10 100 Z" fill="#000" />
+                <path d="M100 60 L160 120 L80 280 L40 120 Z" fill="#e60012" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: ABOUT ME & EDU -->
+    <div id="screen-about" class="screen" style="background-color: var(--p5-black);">
+        <button class="back-btn" onclick="navTo('screen-resume-submenu')">BACK</button>
+        
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-white transform skewX(-20deg) translate-x-1/4 z-0"></div>
+        <div class="absolute bottom-0 left-0 w-3/4 h-1/2 bg-[var(--p5-red)] transform skewY(-10deg) translate-y-1/4 z-0"></div>
+
+        <div class="relative z-10 flex flex-col items-center justify-start h-full p-4 py-16 md:py-8 animate-shatter overflow-y-auto">
+            <div class="bg-black text-white p-6 md:p-12 border-4 border-white transform -rotate-1 max-w-4xl w-full shadow-[8px_8px_0px_var(--p5-red)] md:shadow-[10px_10px_0px_var(--p5-red)] my-auto flex flex-col md:flex-row gap-8 items-center md:items-start">
+                
+                <!-- Anime Profile Image -->
+                <div class="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 jagged-box border-4 border-[var(--p5-red)] relative group transform rotate-2">
+                    <div class="absolute inset-0 bg-[var(--p5-red)] mix-blend-color opacity-50 group-hover:opacity-0 transition-opacity z-10 pointer-events-none"></div>
+                    <img src="./gojo_satoru_3.jpg" onerror="this.style.display='none'" alt="Profile Anime" class="w-full h-full object-cover grayscale contrast-125 group-hover:grayscale-0 hover:scale-105 transition-all duration-500">
+                </div>
+
+                <div class="flex-1 w-full">
+                    <h2 class="font-p5-header text-5xl mb-6 text-stroke-black text-[var(--p5-red)] tracking-widest">PROFILE DATA</h2>
+                    
+                    <div class="space-y-4 text-lg md:text-xl font-bold font-mono">
+                        <div class="flex flex-col md:flex-row border-b border-gray-700 pb-2">
+                            <span class="text-[var(--p5-red)] md:w-32 uppercase">Name:</span>
+                            <span>Prince Badsiwal</span>
+                        </div>
+                        <div class="flex flex-col md:flex-row border-b border-gray-700 pb-2">
+                            <span class="text-[var(--p5-red)] md:w-32 uppercase">Class:</span>
+                            <span>Junior Software Developer</span>
+                        </div>
+                        <div class="flex flex-col md:flex-row border-b border-gray-700 pb-2">
+                            <span class="text-[var(--p5-red)] md:w-32 uppercase">Summary:</span>
+                            <span class="font-sans font-normal text-base leading-relaxed text-gray-300">
+                                Versatile IT and Operations professional with a strong foundation in International Business (JIMS) and technical expertise in Software Development and Hardware Maintenance. Currently advancing technical qualifications with NIELIT 'O' Level (IT) and Computer Aided Business Accounting. Proven ability to bridge the gap between business requirements and technical solutions. demonstrated by certifications from Skill India/NASSCOM and a track record of academic excellence. Seeking to leverage a hybrid skill set in IT Support, Operations, or Junior Development roles.
+                            </span>
+                        </div>
+                        
+                        <div class="mt-8 pt-4">
+                            <div class="text-[var(--p5-red)] mb-2 uppercase tracking-widest text-2xl">Education:</div>
+                            
+                            <div class="bg-gray-900 p-4 border-l-4 border-[var(--p5-red)] transform rotate-1 mb-4">
+                                <div class="text-[var(--p5-cyan)] font-sans text-xl">'O' Level (Information Technology)</div>
+                                <div class="text-sm text-gray-400 mt-1">NIELIT, New Delhi | Pursuing</div>
+                            </div>
+
+                            <div class="bg-gray-900 p-4 border-l-4 border-[var(--p5-red)] transform -rotate-1 mb-4">
+                                <div class="text-[var(--p5-cyan)] font-sans text-xl">CABBA & Grad. Diploma in Int. Business</div>
+                                <div class="text-sm text-gray-400 mt-1">JIMS, New Delhi | CABBA Pursuing</div>
+                            </div>
+
+                            <div class="bg-gray-900 p-4 border-l-4 border-[var(--p5-red)] transform rotate-1">
+                                <div class="text-[var(--p5-cyan)] font-sans text-xl">12th Standard (Commerce)</div>
+                                <div class="text-sm text-gray-400 mt-1">CBSE Board | 67%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: SKILLS & AWARDS (Command style + Save Slots) -->
+    <div id="screen-skills" class="screen bg-[#333]">
+        <button class="back-btn" onclick="navTo('screen-resume-submenu')">BACK</button>
+        
+        <div class="bg-stripes" style="height: 200vh; transform: translateY(-50%) skewY(-20deg); opacity: 0.5;"></div>
+
+        <div class="relative z-10 h-full flex flex-col p-4 md:p-10 pt-24 md:pt-20 overflow-y-auto">
+            <h2 class="font-p5-header text-5xl md:text-8xl text-white text-stroke-black slanted-text mb-12 text-center animate-slide-bottom">
+                SKILLS & AWARDS
+            </h2>
+
+            <div class="max-w-4xl w-full mx-auto space-y-10 animate-slide-right pb-10">
+                
+                <!-- Tech Skills -->
+                <div class="save-slot">
+                    <div class="save-slot-header bg-[var(--p5-cyan)] text-black">Technical Skills</div>
+                    <div class="mt-4 flex flex-wrap gap-3 font-mono font-bold">
+                        <span class="bg-black text-white px-3 py-1">Python</span>
+                        <span class="bg-black text-white px-3 py-1">C</span>
+                        <span class="bg-black text-white px-3 py-1">HTML</span>
+                        <span class="bg-black text-white px-3 py-1">CSS</span>
+                        <span class="bg-black text-[var(--p5-cyan)] px-3 py-1 border border-black">Google Gemini (Educator Certified)</span>
+                        <span class="bg-black text-[var(--p5-cyan)] px-3 py-1 border border-black">AI Prompts</span>
+                        <span class="bg-black text-[var(--p5-cyan)] px-3 py-1 border border-black">MS Office (Excel, Access)</span>
+                        <span class="bg-black text-yellow-400 px-3 py-1 border border-black">Computer Hardware Maintenance (CHM)</span>
+                        <span class="bg-black text-yellow-400 px-3 py-1 border border-black">IoT Basics</span>
+                    </div>
+                </div>
+
+                <!-- Soft Skills -->
+                <div class="save-slot" style="transform: rotate(1deg);">
+                    <div class="save-slot-header">Soft Skills</div>
+                    <div class="mt-4 flex flex-wrap gap-3 font-mono font-bold text-lg">
+                        <span class="border-b-4 border-[var(--p5-red)] pb-1">Team Leadership</span>
+                        <span class="border-b-4 border-[var(--p5-red)] pb-1">Strategic Brainstorming</span>
+                        <span class="border-b-4 border-[var(--p5-red)] pb-1">Adaptability</span>
+                    </div>
+                </div>
+
+                <!-- Awards -->
+                <div class="save-slot">
+                    <div class="save-slot-header bg-yellow-500 text-black">Achievements</div>
+                    <div class="mt-4 space-y-4">
+                        <div>
+                            <div class="font-bold text-2xl text-[var(--p5-red)] font-p5-header tracking-wider">1st Position: "Brainstorming" Competition</div>
+                            <div class="text-gray-700 font-sans mt-1">JIMS (Management Event)</div>
+                        </div>
+                        <div class="border-t-2 border-gray-200 pt-4">
+                            <div class="font-bold text-2xl text-[var(--p5-cyan)] font-p5-header tracking-wider">Certificate of Participation</div>
+                            <div class="text-gray-700 font-sans mt-1">Mentor Mentee Activity</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interests -->
+                <div class="grid grid-cols-1 gap-8">
+                    <div class="save-slot" style="transform: rotate(-1deg); margin-bottom: 0;">
+                        <div class="save-slot-header bg-black text-white">Interests</div>
+                        <div class="mt-4 font-bold text-xl space-y-2">
+                            <div>🏏 Playing Cricket</div>
+                            <div>🎬 Watching Movies</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 5: PROJECTS -->
+    <div id="screen-projects" class="screen bg-black">
+        <button class="back-btn" onclick="navTo('screen-resume-submenu')">BACK</button>
+        
+        <div class="absolute inset-0 bg-[var(--p5-red)] z-0 transform skewX(30deg) translate-x-1/2 opacity-80"></div>
+
+        <div class="relative z-10 h-full flex flex-col p-4 md:p-10 pt-24 md:pt-20 overflow-y-auto">
+            <h2 class="font-p5-header text-5xl md:text-8xl text-white text-stroke-black transform -rotate-3 mb-12 animate-slide-left pl-4 md:pl-20">
+                MISSIONS LOG
+            </h2>
+            
+            <div class="max-w-4xl w-full mx-auto md:ml-20 space-y-8 animate-slide-right pb-10">
+                
+                <div class="save-slot !border-4 !border-white !bg-black !text-white shadow-[8px_8px_0px_var(--p5-black)] hover:!bg-gray-900">
+                    <div class="save-slot-header !bg-white !text-black">Project_01</div>
+                    <div class="mt-4 flex flex-col md:flex-row gap-6">
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-4 mb-2">
+                                <h3 class="text-2xl md:text-3xl font-p5-header text-[var(--p5-cyan)] tracking-wider">Image to PDF Converter (Python)</h3>
+                                <div class="flex gap-2">
+                                    <a href="https://github.com/PrinceBad/Image-to-PDF-Converter" target="_blank" class="px-2 py-0.5 bg-white text-black font-p5-header text-sm hover:bg-[var(--p5-red)] hover:text-white transition-colors uppercase">GitHub 🔗</a>
+                                </div>
+                            </div>
+                            <ul class="list-none space-y-2 font-sans text-gray-300">
+                                <li class="flex items-start"><span class="text-[var(--p5-red)] mr-2 mt-1">▶</span> Developed a Python-based desktop application to convert multiple images to PDF format.</li>
+                                <li class="flex items-start"><span class="text-[var(--p5-red)] mr-2 mt-1">▶</span> Utilized the Tkinter GUI framework, Pillow for image processing, and ReportLab for PDF creation.</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-48 h-40 md:h-32 flex-shrink-0 jagged-box relative border-2 border-gray-600">
+                            <div class="absolute inset-0 bg-[var(--p5-red)] mix-blend-color opacity-50 z-10 pointer-events-none"></div>
+                            <img src="./python_pdf_p5.jpg" onerror="this.style.display='none'" alt="Image to PDF Python" class="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all duration-300">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="save-slot !border-4 !border-white !bg-black !text-white shadow-[8px_8px_0px_var(--p5-black)] hover:!bg-gray-900" style="transform: rotate(1deg);">
+                    <div class="save-slot-header !bg-white !text-black">Project_02</div>
+                    <div class="mt-4 flex flex-col md:flex-row gap-6">
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-4 mb-2">
+                                <h3 class="text-2xl md:text-3xl font-p5-header text-[var(--p5-cyan)] tracking-wider">Anime Recommender</h3>
+                                <div class="flex gap-2">
+                                    <a href="https://github.com/PrinceBad/Anime-Recommender" target="_blank" class="px-2 py-0.5 bg-white text-black font-p5-header text-sm hover:bg-[var(--p5-red)] hover:text-white transition-colors uppercase">GitHub 🔗</a>
+                                </div>
+                            </div>
+                            <ul class="list-none space-y-2 font-sans text-gray-300">
+                                <li class="flex items-start"><span class="text-[var(--p5-red)] mr-2 mt-1">▶</span> Coded a Python-based, command-line interface (CLI) system to suggest anime titles based on user preferences.</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-48 h-40 md:h-32 flex-shrink-0 jagged-box relative border-2 border-gray-600">
+                            <div class="absolute inset-0 bg-[var(--p5-cyan)] mix-blend-color opacity-50 z-10 pointer-events-none"></div>
+                            <img src="./8adf8cb9139372a370b6e9d43e18c38a.jpg" onerror="this.style.display='none'" alt="Anime Project" class="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all duration-300">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="save-slot !border-4 !border-white !bg-black !text-white shadow-[8px_8px_0px_var(--p5-black)] hover:!bg-gray-900" style="transform: rotate(-1deg);">
+                    <div class="save-slot-header !bg-white !text-black">Project_03</div>
+                    <div class="mt-4 flex flex-col md:flex-row gap-6">
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-4 mb-2">
+                                <h3 class="text-2xl md:text-3xl font-p5-header text-[var(--p5-cyan)] tracking-wider">Py-Image: Real-Time Image Compressor</h3>
+                                <div class="flex gap-2">
+                                    <a href="https://github.com/PrinceBad/Py-Image-Compressor" target="_blank" class="px-2 py-0.5 bg-white text-black font-p5-header text-sm hover:bg-[var(--p5-red)] hover:text-white transition-colors uppercase">GitHub 🔗</a>
+                                    <a href="https://py-image-compressor.vercel.app/" target="_blank" class="px-2 py-0.5 bg-[var(--p5-red)] text-white font-p5-header text-sm hover:bg-[var(--p5-cyan)] hover:text-black transition-colors uppercase">Live Demo ⚡</a>
+                                </div>
+                            </div>
+                            <ul class="list-none space-y-2 font-sans text-gray-300">
+                                <li class="flex items-start"><span class="text-[var(--p5-red)] mr-2 mt-1">▶</span> Purely client-side React application for high-performance batch image compression, resizing, and format conversion.</li>
+                                <li class="flex items-start"><span class="text-[var(--p5-red)] mr-2 mt-1">▶</span> Provides real-time previewing and size estimation entirely within the browser for absolute privacy.</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-48 h-40 md:h-32 flex-shrink-0 jagged-box relative border-2 border-gray-600">
+                            <div class="absolute inset-0 bg-[var(--p5-red)] mix-blend-color opacity-50 z-10 pointer-events-none"></div>
+                            <img src="./image_compressor_p5.jpg" onerror="this.style.display='none'" alt="Image Compressor" class="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all duration-300">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="save-slot !border-4 !border-white !bg-black !text-white shadow-[8px_8px_0px_var(--p5-black)] hover:!bg-gray-900" style="transform: rotate(1deg);">
+                    <div class="save-slot-header !bg-white !text-black">Project_04</div>
+                    <div class="mt-4 flex flex-col md:flex-row gap-6">
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center gap-4 mb-2">
+                                <h3 class="text-2xl md:text-3xl font-p5-header text-[var(--p5-cyan)] tracking-wider">Image2PDF Converter (Web)</h3>
+                                <div class="flex gap-2">
+                                    <a href="https://github.com/PrinceBad/Image-2-Pdf-Demo" target="_blank" class="px-2 py-0.5 bg-white text-black font-p5-header text-sm hover:bg-[var(--p5-red)] hover:text-white transition-colors uppercase">GitHub 🔗</a>
+                                    <a href="https://image-2-pdf-beige.vercel.app/" target="_blank" class="px-2 py-0.5 bg-[var(--p5-red)] text-white font-p5-header text-sm hover:bg-[var(--p5-cyan)] hover:text-black transition-colors uppercase">Live Demo ⚡</a>
+                                </div>
+                            </div>
+                            <ul class="list-none space-y-2 font-sans text-gray-300">
+                                <li class="flex items-start"><span class="text-[var(--p5-red)] mr-2 mt-1">▶</span> Secure and private web-based tool to compile multiple images into a single standard A4 PDF document.</li>
+                                <li class="flex items-start"><span class="text-[var(--p5-red)] mr-2 mt-1">▶</span> Features an interactive drag-and-drop workspace, page reordering, and instant offline client-side PDF generation.</li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-48 h-40 md:h-32 flex-shrink-0 jagged-box relative border-2 border-gray-600">
+                            <div class="absolute inset-0 bg-[var(--p5-cyan)] mix-blend-color opacity-50 z-10 pointer-events-none"></div>
+                            <img src="./image_to_pdf_p5.jpg" onerror="this.style.display='none'" alt="Image to PDF Web Converter" class="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all duration-300">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 6: CERTIFICATIONS -->
+    <div id="screen-certs" class="screen bg-black">
+        <button class="back-btn" onclick="navTo('screen-main')">BACK</button>
+        
+        <div class="absolute inset-0 bg-white z-0 transform -skew-y-12 scale-110 opacity-10 animate-shatter"></div>
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-[var(--p5-red)] transform skewX(10deg) z-0"></div>
+
+        <div class="relative z-10 h-full flex flex-col p-4 md:p-10 pt-20 overflow-y-auto items-center">
+            <h2 class="font-p5-header text-6xl md:text-8xl text-white text-stroke-black slanted-text mb-12 animate-slide-bottom">
+                CERTIFICATIONS
+            </h2>
+            
+            <div class="max-w-3xl w-full space-y-6 animate-slide-left pb-10">
+                
+                <div class="bg-white text-black p-4 border-l-8 border-[var(--p5-red)] shadow-[5px_5px_0_var(--p5-red)] transform -rotate-1 hover:scale-105 transition-transform">
+                    <h3 class="text-2xl font-bold font-sans uppercase">Gemini Educator (English)</h3>
+                    <p class="text-gray-600 font-mono mt-1">Google</p>
+                </div>
+
+                <div class="bg-white text-black p-4 border-l-8 border-[var(--p5-cyan)] shadow-[5px_5px_0_var(--p5-cyan)] transform rotate-1 hover:scale-105 transition-transform">
+                    <h3 class="text-2xl font-bold font-sans uppercase">Junior Software Developer</h3>
+                    <p class="text-gray-600 font-mono mt-1">Skill India / NASSCOM</p>
+                </div>
+
+                <div class="bg-white text-black p-4 border-l-8 border-[var(--p5-red)] shadow-[5px_5px_0_var(--p5-red)] transform -rotate-1 hover:scale-105 transition-transform">
+                    <h3 class="text-2xl font-bold font-sans uppercase">Computer Hardware Maintenance (CHMT-'O' Level)</h3>
+                    <p class="text-gray-600 font-mono mt-1">NIELIT</p>
+                </div>
+
+                <div class="bg-white text-black p-4 border-l-8 border-[var(--p5-cyan)] shadow-[5px_5px_0_var(--p5-cyan)] transform rotate-1 hover:scale-105 transition-transform">
+                    <h3 class="text-2xl font-bold font-sans uppercase">Cyber Awareness AI Basic</h3>
+                    <p class="text-gray-600 font-mono mt-1">NIIT Foundation</p>
+                </div>
+
+                <div class="bg-white text-black p-4 border-l-8 border-[var(--p5-red)] shadow-[5px_5px_0_var(--p5-red)] transform -rotate-1 hover:scale-105 transition-transform">
+                    <h3 class="text-2xl font-bold font-sans uppercase">Digital Marketing</h3>
+                    <p class="text-gray-600 font-mono mt-1">using LinkedIn and YouTube</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 7: SOCIALS / LINKS -->
+    <div id="screen-socials" class="screen" style="background-color: var(--p5-cyan);">
+        <button class="back-btn" onclick="navTo('screen-main')">BACK</button>
+        
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img src="./socials_bg.jpg" onerror="this.style.display='none'" class="w-full h-full object-cover opacity-25 contrast-125 mix-blend-multiply" alt="Network Background">
+        </div>
+        
+        <div class="absolute top-0 right-0 w-full h-1/2 bg-[var(--p5-red)] transform -skew-y-12 origin-top-right z-0 shadow-2xl"></div>
+        <div class="absolute bottom-0 left-0 w-3/4 h-3/4 border-8 border-white rounded-full transform -translate-x-1/2 translate-y-1/4 opacity-20 z-0"></div>
+
+        <div class="relative z-10 h-full flex flex-col items-center justify-start p-4 py-16 md:py-8 animate-shatter overflow-y-auto">
+            <div class="my-auto flex flex-col items-center w-full max-w-lg">
+                <div class="bg-white p-2 rounded-full mb-8 transform -rotate-6 shadow-xl border-4 border-[var(--p5-red)]">
+                    <div class="bg-black text-[var(--p5-cyan)] font-p5-header text-4xl md:text-6xl px-6 md:px-8 py-2 rounded-full border-2 border-dashed border-[var(--p5-cyan)] tracking-widest">
+                        NETWORK
+                    </div>
+                </div>
+
+                <div class="bg-black text-white p-6 md:p-8 border-4 border-[var(--p5-red)] transform rotate-2 w-full shadow-[8px_8px_0px_rgba(0,0,0,0.5)] md:shadow-[10px_10px_0px_rgba(0,0,0,0.5)] flex flex-col gap-6">
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b border-gray-700 pb-4">
+                        <span class="text-[var(--p5-red)] font-p5-header text-3xl sm:w-24">Email:</span>
+                        <a href="mailto:princebadsiwal@gmail.com" class="font-mono text-base md:text-lg hover:text-[var(--p5-cyan)] transition-colors break-all">
+                            princebadsiwal@gmail.com
+                        </a>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-b border-gray-700 pb-4">
+                        <span class="text-[var(--p5-red)] font-p5-header text-3xl sm:w-24">Web:</span>
+                        <a href="http://badsiwal.thsite.top" target="_blank" class="font-mono text-base md:text-lg hover:text-[var(--p5-cyan)] transition-colors underline decoration-wavy break-all">
+                            badsiwal.thsite.top
+                        </a>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                        <span class="text-[var(--p5-red)] font-p5-header text-3xl sm:w-24">LinkedIn:</span>
+                        <a href="https://linkedin.com/in/prince-badsiwal-81025367" target="_blank" class="font-mono text-base md:text-lg hover:text-[var(--p5-cyan)] transition-colors break-all">
+                            /in/prince-badsiwal-81025367
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="absolute bottom-0 right-10 w-48 h-64 bg-[var(--p5-red)] opacity-50" style="clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 100%, 0 100%, 0 30%); z-index: -1;"></div>
+
+        </div>
+    </div>
+
+    <script>
+        function navTo(targetId, overrideColor = null) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => {
+                s.classList.remove('active');
+                const newEl = s.cloneNode(true);
+                s.parentNode.replaceChild(newEl, s);
+            });
+
+            const target = document.getElementById(targetId);
+            target.classList.add('active');
+
+            if (overrideColor === 'bg-cyan') {
+                document.body.style.backgroundColor = 'var(--p5-cyan)';
+            } else if (overrideColor === 'bg-red') {
+                document.body.style.backgroundColor = 'var(--p5-red)';
+            } else {
+                document.body.style.backgroundColor = 'var(--p5-black)';
+            }
+        }
+    </script>
+</body>
+</html>
